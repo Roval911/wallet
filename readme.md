@@ -1,14 +1,20 @@
 Привет) Приложение по REST принимает запрос вида
-POST api/v1/wallet
-{
-valletId: UUID,
-operationType: DEPOSIT or WITHDRAW,
-amount: 1000
+
+POST api/v1/wallet\
+{\
+valletId: UUID,\
+operationType: DEPOSIT or WITHDRAW,\
+amount: 1000\
 }
-После выполнять логику по изменению счета в базе данных
+
+После выполняется логика по изменению счета в базе данных
+
 Также есть возможность получить баланс кошелька
+
 GET api/v1/wallets/{UUID}
+
 Для создания кошелька используйте запрос в формате :
+
 curl -X 'POST' \                                   
 'http://localhost:8080/api/v1/wallets' \
 -H 'accept: application/json' \
