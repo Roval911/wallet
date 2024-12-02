@@ -8,7 +8,9 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"log"
 	"os"
-	"wallet/configs"
+	"wallet/controllers"
+	"wallet/db"
+	_ "wallet/docs"
 )
 
 func init() {
@@ -17,16 +19,26 @@ func init() {
 		log.Fatalf("Error loading .env file")
 	}
 	// Инициализация базы данных
-	configs.InitDb()
+	db.InitDb()
 
 	// Запуск миграций
-	configs.RunMigrations()
+	db.RunMigrations()
 }
+
+// @title Wallet Service API
+// @version 1.0
+// @description API для управления операциями кошелька
+// @host localhost:8080
+// @BasePath /api/v1
 func main() {
 	router := gin.Default()
 	router.Use(cors.Default())
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+	router.POST("/api/v1/wallets", controllers.CreateWallet)
+	router.GET("/api/v1/wallets/:walletId", controllers.GetWalletBalance)
+	router.POST("/api/v1/wallet", controllers.UpdateWallet)
 
 	router.Run(os.Getenv("PORT"))
 }

@@ -1,4 +1,4 @@
-package services
+package db
 
 import (
 	"database/sql"
@@ -6,16 +6,27 @@ import (
 	"sync"
 
 	"github.com/google/uuid"
-	"wallet-service/database"
 )
 
 var mu sync.Mutex // Глобальная блокировка для работы с кошельками
+
+func CreateWallet(initialBalance int64) (uuid.UUID, error) {
+	walletId := uuid.New()
+	query := "INSERT INTO wallets (id, balance) VALUES ($1, $2)"
+
+	_, err := db.Exec(query, walletId, initialBalance)
+	if err != nil {
+		return uuid.Nil, err
+	}
+
+	return walletId, nil
+}
 
 func GetWalletBalance(walletId uuid.UUID) (int64, error) {
 	var balance int64
 	query := "SELECT balance FROM wallets WHERE id = $1"
 
-	err := database.DB.QueryRow(query, walletId).Scan(&balance)
+	err := db.QueryRow(query, walletId).Scan(&balance)
 	if err == sql.ErrNoRows {
 		return 0, errors.New("wallet not found")
 	} else if err != nil {
@@ -29,7 +40,7 @@ func UpdateWallet(walletId uuid.UUID, operationType string, amount int64) error 
 	mu.Lock()
 	defer mu.Unlock()
 
-	tx, err := database.DB.Begin()
+	tx, err := db.Begin()
 	if err != nil {
 		return err
 	}
