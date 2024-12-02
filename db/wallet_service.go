@@ -28,7 +28,7 @@ func GetWalletBalance(walletId uuid.UUID) (int64, error) {
 
 	err := db.QueryRow(query, walletId).Scan(&balance)
 	if err == sql.ErrNoRows {
-		return 0, errors.New("wallet not found")
+		return 0, errors.New("Кошелек не найден")
 	} else if err != nil {
 		return 0, err
 	}
@@ -50,7 +50,7 @@ func UpdateWallet(walletId uuid.UUID, operationType string, amount int64) error 
 	err = tx.QueryRow(query, walletId).Scan(&currentBalance)
 	if err == sql.ErrNoRows {
 		tx.Rollback()
-		return errors.New("wallet not found")
+		return errors.New("Кошелек не найден")
 	} else if err != nil {
 		tx.Rollback()
 		return err
@@ -62,12 +62,12 @@ func UpdateWallet(walletId uuid.UUID, operationType string, amount int64) error 
 	} else if operationType == "WITHDRAW" {
 		if currentBalance < amount {
 			tx.Rollback()
-			return errors.New("insufficient funds")
+			return errors.New("недостаточно средств")
 		}
 		newBalance = currentBalance - amount
 	} else {
 		tx.Rollback()
-		return errors.New("invalid operation type")
+		return errors.New("недопустимый тип операции")
 	}
 
 	updateQuery := "UPDATE wallets SET balance = $1 WHERE id = $2"

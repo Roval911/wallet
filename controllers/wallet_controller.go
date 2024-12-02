@@ -57,7 +57,7 @@ func CreateWallet(c *gin.Context) {
 func GetWalletBalance(c *gin.Context) {
 	walletId, err := uuid.Parse(c.Param("walletId"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid wallet ID"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "неверный идентификатор кошелька"})
 		return
 	}
 
