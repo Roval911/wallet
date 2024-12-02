@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"  # Используем переменную окружения PORT
+    environment:
+      - DB_HOST=${DB_HOST}  # Подключение через переменные окружения
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - PORT=${PORT}
+    volumes:
+      - ./migration:/app/migration
+    depends_on:
+      - db
+    networks:
+      - wallet-network
+
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: ${DB_USER}  # Используем переменные из .env
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "${DB_PORT}:${DB_PORT}"  # Используем переменные из .env для порта
+    volumes:
+      - wallet-db-data:/var/lib/postgresql/data
+    networks:
+      - wallet-network
+
+networks:
+  wallet-network:
+    driver: bridge
+
+volumes:
+  wallet-db-data:
