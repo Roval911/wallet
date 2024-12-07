@@ -8,12 +8,6 @@ amount: 1000
 После выполнять логику по изменению счета в базе данных
 Также есть возможность получить баланс кошелька
 GET api/v1/wallets/{UUID}
-Для создания кошелька используйте запрос в формате :
-curl -X 'POST' \                                   
-'http://localhost:8080/api/v1/wallets' \
--H 'accept: application/json' \
--H 'Content-Type: application/json' \
--d '{"initialBalance": 1000}'
 
 docker-compose запускается стандартной комантдой: docker-compose up --build
 
