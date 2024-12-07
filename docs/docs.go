@@ -69,7 +69,7 @@ const docTemplate = `{
         },
         "/wallets": {
             "post": {
-                "description": "Создает новый кошелек с начальным балансом.",
+                "description": "Создает новый кошелек с начальным балансом. Баланс должен быть неотрицательным.",
                 "consumes": [
                     "application/json"
                 ],
@@ -82,8 +82,8 @@ const docTemplate = `{
                 "summary": "Создать кошелек",
                 "parameters": [
                     {
-                        "description": "Начальный баланс",
-                        "name": "initialBalance",
+                        "description": "Начальный баланс (неотрицательное число)",
+                        "name": "input",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -93,14 +93,14 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "201": {
-                        "description": "Созданный кошелек",
+                        "description": "ID созданного кошелька",
                         "schema": {
                             "type": "object",
                             "additionalProperties": true
                         }
                     },
                     "400": {
-                        "description": "Неверный запрос",
+                        "description": "Неверный запрос, например, отрицательный баланс",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -109,7 +109,7 @@ const docTemplate = `{
                         }
                     },
                     "500": {
-                        "description": "Ошибка на стороне сервера",
+                        "description": "Ошибка на стороне сервера, например, проблема с базой данных",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {

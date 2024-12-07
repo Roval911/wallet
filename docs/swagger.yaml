@@ -58,11 +58,12 @@ paths:
     post:
       consumes:
       - application/json
-      description: Создает новый кошелек с начальным балансом.
+      description: Создает новый кошелек с начальным балансом. Баланс должен быть
+        неотрицательным.
       parameters:
-      - description: Начальный баланс
+      - description: Начальный баланс (неотрицательное число)
         in: body
-        name: initialBalance
+        name: input
         required: true
         schema:
           type: integer
@@ -70,18 +71,18 @@ paths:
       - application/json
       responses:
         "201":
-          description: Созданный кошелек
+          description: ID созданного кошелька
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: Неверный запрос
+          description: Неверный запрос, например, отрицательный баланс
           schema:
             additionalProperties:
               type: string
             type: object
         "500":
-          description: Ошибка на стороне сервера
+          description: Ошибка на стороне сервера, например, проблема с базой данных
           schema:
             additionalProperties:
               type: string

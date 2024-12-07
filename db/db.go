@@ -76,3 +76,7 @@ func RollbackLastMigration() {
 
 	log.Println("Last migration rolled back successfully")
 }
+
+func SetDB(mockDB *sql.DB) {
+	db = mockDB
+}

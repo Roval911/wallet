@@ -15,28 +15,31 @@ type WalletRequest struct {
 
 // CreateWallet godoc
 // @Summary Создать кошелек
-// @Description Создает новый кошелек с начальным балансом.
+// @Description Создает новый кошелек с начальным балансом. Баланс должен быть неотрицательным.
 // @Tags Wallet
 // @Accept json
 // @Produce json
-// @Param initialBalance body int64 true "Начальный баланс"
-// @Success 201 {object} map[string]interface{} "Созданный кошелек"
-// @Failure 400 {object} map[string]string "Неверный запрос"
-// @Failure 500 {object} map[string]string "Ошибка на стороне сервера"
+// @Param input body int64 true "Начальный баланс (неотрицательное число)"
+// @Success 201 {object} map[string]interface{} "ID созданного кошелька"
+// @Failure 400 {object} map[string]string "Неверный запрос, например, отрицательный баланс"
+// @Failure 500 {object} map[string]string "Ошибка на стороне сервера, например, проблема с базой данных"
 // @Router /wallets [post]
 func CreateWallet(c *gin.Context) {
-	var req struct {
-		InitialBalance int64 `json:"initialBalance" binding:"required"`
-	}
+	var balance int64
 
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	if err := c.ShouldBindJSON(&balance); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input: " + err.Error()})
 		return
 	}
 
-	walletId, err := db.CreateWallet(req.InitialBalance)
+	if balance < 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Balance must be non-negative"})
+		return
+	}
+
+	walletId, err := db.CreateWallet(balance)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not create wallet: " + err.Error()})
 		return
 	}
 
